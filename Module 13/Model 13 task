@@ -1,0 +1,22 @@
+# For an online conference, you need to write a program that calculates the total cost of tickets. The program should work as follows:
+# 1. The user is asked for the number of tickets he wants to purchase for the event.
+# 2. Next, the age of the visitor is requested for each ticket. According to the age the ticket cost is selected:
+#       If the conference visitor is less than 18 years old, then he goes to the conference for free.
+#       From 18 to 25 years — 990 r.
+#       From 25 years — the full cost of 1390 r.
+# 3. As a result of the program, the amount to be paid is displayed. At the same time, if a person registers more than three people for a conference,
+# he additionally receives a 10% discount on the full cost of the order.
+
+def tickets_total_cost():
+    tickets_num = int(input('How many tickets do you need? '))
+    total_cost = 0
+    for i in range(1,tickets_num+1):
+        age = int(input('Enter the age of person %d: ' % i))
+        total_cost += 0 if age < 18 else 990 if 18 <= age < 25 else 1390
+        print(total_cost)
+    if tickets_num > 3: # We assume here that the customer gets discount no matter the age.
+    #if condition total_cost >= 990*3 # In case we have to take into account only adults over 18
+        total_cost *= 0.9
+    return total_cost
+
+print(tickets_total_cost())
