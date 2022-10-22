@@ -1,0 +1,40 @@
+# Ex. 14.5.9
+
+def min_list(L):
+    """ This is a recursive function to find the minimum element of the list """
+    if len(L) == 1:
+        return L[0]
+    return L[0] if L[0] < min_list(L[1:]) else min_list(L[1:])
+
+
+l = [1, -2, 0.9]
+print(min_list(l))
+print(min_list([0, 1]))
+
+
+# Ex. 14.5.10
+
+def reverse_num(s: int) -> int:
+    """ This is a recursive function to reverse digits of an int number (without 0). """
+    if len(str(s)) == 1:
+        return int(str(s))
+    return int(str(reverse_num(str(s)[1:])) + str(s)[0])
+
+
+print(reverse_num(123456))
+
+
+#Ex. 14.5.11
+
+def dig_sum_equal(N: int, S: int) -> bool:
+    """ This is a recursive function that indicates whether the sum of digits of N equals S.  """
+    if S < 0:
+        return False
+    else:
+        if N < 10:
+            return S == N
+        else:
+            return dig_sum_equal(N // 10, S - N % 10)
+
+
+print(dig_sum_equal(12597, 15))
