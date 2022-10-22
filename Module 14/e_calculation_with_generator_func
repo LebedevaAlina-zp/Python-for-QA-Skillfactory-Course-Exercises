@@ -1,0 +1,18 @@
+# Exercise 14.5.13
+
+def e():
+    """ Generator for the number e = 2.718... approximation based on calculating e_n = (1 + 1/n)**n, n - integers """
+    n = 1
+    while True:
+        yield (1 + 1/n)**n
+        n += 1
+
+
+last = 0
+for a in e():
+    if (a - last) < 0.00000001: # required accuracy
+        print(a)
+        break # exit the loop when required accuracy has been reached
+    else:
+        last = a # else put new approximation calculated by generator into the variable 'last'
+        print(last)
