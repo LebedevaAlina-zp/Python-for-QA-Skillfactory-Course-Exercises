@@ -1,44 +1,36 @@
 import requests
-#import json
-from config import currencies, dollar_names, euro_names, ruble_names
+from config import currencies
 
 class APIException(Exception):
     pass
 
 
-def alt_curr_name(name: str):
-    """Функция пытается исправить название валюты, чтобы представить ее в том же виде, в каком валюты записаны в ключах с
-    ловаря currencies"""
+def search_curr_name(name: str):
+    """Функция пытается найти среди ключей или исправить название валюты, чтобы представить ее в том же виде, в каком
+    валюты записаны в ключах словаря currencies"""
     name = name.lower()
     if name in currencies.keys():
         return name
-    if name in dollar_names:
-        return 'доллар'
-    elif name in euro_names:
-        return 'евро'
-    elif name in ruble_names:
-        return 'рубль'
     else:
-        return name
+        # Проверяем в цикле, не найдется ли введенное пользователей имя среди альтернативных имен валют
+        for curr in currencies.keys():
+            if name in currencies[curr][2]:
+                return curr
+        # Если ничего не нашлось, выдаем ошибку
+        raise APIException(f"Не удалось обработать валюту <{name}>.\nСписок доступных валют можно проверить по команде /values")
 
 
 class CurrenciesConversion():
     @staticmethod
     def get_price(base: str, quote: str, amount: str):
-        base = alt_curr_name(base)
-        try:
-            base_code = currencies[base][0]
-        except KeyError:
-            raise APIException(f"Не удалось обработать валюту <{base}>.\nСписок доступных валют можно проверить по команде /values")
+        base = search_curr_name(base)
+        base_code = currencies[base][0]
 
-        quote = alt_curr_name(quote)
-        try:
-            quote_code = currencies[quote][0]
-        except KeyError:
-            raise APIException(f"Не удалось обработать валюту <{quote}>.\nСписок доступных валют можно проверить по команде /values")
+        quote = search_curr_name(quote)
+        quote_code = currencies[quote][0]
 
         try:
-            # Преобразовываем строку в число, исправив возможную ошибку пользователя десятичный разделитель запятую
+            # Преобразовываем строку в число, исправив возможную ошибку - десятичный разделитель запятую
             # и отрицательную сумму
             amount = abs(float(amount.replace(',', '.'))) # если вдруг пользователь ввел разделительную запятую вместо точки
         except ValueError:
