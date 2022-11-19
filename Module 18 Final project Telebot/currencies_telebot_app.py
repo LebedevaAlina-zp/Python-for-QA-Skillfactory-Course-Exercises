@@ -1,7 +1,5 @@
-import requests
 import telebot
-import json
-from extensions import APIException
+from extensions import APIException, CurrenciesConversion
 from config import TOKEN, currencies
 
 bot = telebot.TeleBot(TOKEN)
@@ -9,8 +7,9 @@ bot = telebot.TeleBot(TOKEN)
 @bot.message_handler(commands=['start', 'help'])
 def handle_start(message: telebot.types.Message):
     text = '''Это бот-калькулятор конвертации валют. Введите команду в формате:
-    <валюта, в которую переводим> <валюта, из которой переводим> <количество первой валюты>
+    <валюта, из которой переводим> <валюта, в которую переводим> <количество первой валюты>
     Например: доллар рубль 100
+    Курсы валют определяются сервисом exchangerate.host.
     Посмотреть список досутпных валют можно по команде /values'''
     bot.send_message(message.chat.id, text)
 
@@ -26,18 +25,20 @@ def handle_values(message: telebot.types.Message):
 
 @bot.message_handler(content_types=['text'])
 def curr_converter(message: telebot.types.Message):
-    params = message.text.split()
+    try:
+        params = message.text.split()
+        if len(params) != 3:
+            raise APIException("Команда должна содержать ровно 3 параметра.")
 
-    if len(params) != 3:
-        raise APIException("Команда должна содержать ровно 3 параметра.")
+        base, quote, amount = params
+        total_base = CurrenciesConversion.conversion(base, quote, amount)
+        text = f"{amount} {base} - это {total_base} {quote}"
 
-    quote, base, amount = params
+    except APIException as e:
+        text = f"Ошибка ввода. {e}"
 
-    r = requests.get(f'https://api.exchangerate.host/convert?from={currencies[quote]}&to={currencies[base]}')
-    total_base = r.json()['result'] * float(amount)
-    text = f"{amount} {quote} - это {total_base} {base} по курсу https://exchangerate.host"
-
-    bot.reply_to(message, text)
+    finally:
+        bot.reply_to(message, text)
 
 
 bot.polling(none_stop=True)
