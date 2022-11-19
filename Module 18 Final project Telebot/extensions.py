@@ -7,7 +7,7 @@ class APIException(Exception):
 
 
 def alt_curr_name(name: str):
-    """Функция пытается исправить название валюты, чтобы представить ее в то же виде, в каком валюты записаны в ключах с
+    """Функция пытается исправить название валюты, чтобы представить ее в том же виде, в каком валюты записаны в ключах с
     ловаря currencies"""
     name = name.lower()
     if name in currencies.keys():
@@ -24,7 +24,7 @@ def alt_curr_name(name: str):
 
 class CurrenciesConversion():
     @staticmethod
-    def conversion(base: str, quote: str, amount: str):
+    def get_price(base: str, quote: str, amount: str):
         base = alt_curr_name(base)
         try:
             base_code = currencies[base][0]
