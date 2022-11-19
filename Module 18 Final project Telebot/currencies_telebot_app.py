@@ -31,8 +31,8 @@ def curr_converter(message: telebot.types.Message):
             raise APIException("Команда должна содержать ровно 3 параметра.")
 
         base, quote, amount = params
-        total_base = CurrenciesConversion.conversion(base, quote, amount)
-        text = f"{amount} {base} - это {total_base} {quote}"
+        total_out, base_out, quote_out, amount_out = CurrenciesConversion.conversion(base, quote, amount)
+        text = f"{amount_out} {base_out} - это {total_out} {quote_out}"
 
     except APIException as e:
         text = f"Ошибка ввода. {e}"
