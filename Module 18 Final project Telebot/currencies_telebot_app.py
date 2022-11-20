@@ -6,7 +6,7 @@ bot = telebot.TeleBot(TOKEN)
 
 @bot.message_handler(commands=['start', 'help'])
 def handle_start(message: telebot.types.Message):
-    text = '''Это бот-калькулятор конвертации валют. Введите команду в формате:
+    text = '''Это калькулятор конвертации валют. Введите команду в формате:
     <валюта, из которой переводим> <валюта, в которую переводим> <количество первой валюты>
     Например: доллар рубль 100
     Курсы валют определяются сервисом exchangerate.host.
@@ -31,7 +31,7 @@ def curr_converter(message: telebot.types.Message):
             raise APIException("Команда должна содержать ровно 3 параметра.")
 
         base, quote, amount = params
-        total_out, base_out, quote_out, amount_out = CurrenciesConversion.conversion(base, quote, amount)
+        total_out, base_out, quote_out, amount_out = CurrenciesConversion.get_price(base, quote, amount)
         text = f"{amount_out} {base_out} - это {total_out} {quote_out}"
 
     except APIException as e:
